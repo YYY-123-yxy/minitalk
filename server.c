@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ziyang <ziyang@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/15 20:54:15 by ziyang            #+#    #+#             */
+/*   Updated: 2026/04/15 21:33:09 by ziyang           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf/ft_printf.h"
 #include "libft/libft.h"
 #include <signal.h>
@@ -5,10 +17,10 @@
 
 void	handler(int sig, siginfo_t *info, void *context)
 {
-	static int		bit = 7;
+	static int				bit = 7;
 	static unsigned char	c = 0;
-	(void)context;
 
+	(void)context;
 	if (sig == SIGUSR1)
 		c |= (1 << bit);
 	bit--;
@@ -21,7 +33,7 @@ void	handler(int sig, siginfo_t *info, void *context)
 		c = 0;
 		bit = 7;
 	}
-	if (info -> si_pid > 0)
+	if (info->si_pid > 0)
 		kill(info->si_pid, SIGUSR1);
 }
 
@@ -31,7 +43,7 @@ void	setup_signals(void)
 
 	sa.sa_sigaction = handler;
 	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO0;
+	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
 }
@@ -44,5 +56,3 @@ int	main(void)
 		pause();
 	return (0);
 }
-
-

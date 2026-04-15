@@ -3,43 +3,39 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ziyang <ziyang@learner.42.tech>            +#+  +:+       +#+         #
+#    By: ziyang <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2026/04/15 20:54:24 by ziyang            #+#    #+#              #
-#    Updated: 2026/04/15 20:54:26 by ziyang           ###   ########.fr        #
+#    Created: 2025/12/22 18:23:55 by ziyang            #+#    #+#              #
+#    Updated: 2025/12/25 17:11:13 by ziyang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+NAME = libftprintf.a
+
 CC = cc
+
 CFLAGS = -Wall -Wextra -Werror
-LIBFT = libft/libft.a
-PRINTF = ft_printf/libftprintf.a
 
-SERVER = server
-CLIENT = client
+SRC = ft_printf.c ft_format.c ft_putchar.c ft_putnbr.c ft_putptr.c \
+      ft_putstr.c ft_puthexa_lower.c ft_puthexa_upper.c ft_putunsigned_u.c
 
-all: $(LIBFT) $(PRINTF) $(SERVER) $(CLIENT)
+OBJ = $(SRC:.c=.o)
 
-$(LIBFT):
-	make -C libft
-	
-$(PRINTF):
-	make -C ft_printf
+INCLUD = -I ./
 
-$(SERVER): server.c
-	$(CC) $(CFLAGS) server.c $(LIBFT) $(PRINTF) -o $(SERVER)
+all:$(NAME)
 
-$(CLIENT): client.c
-	$(CC) $(CFLAGS) client.c $(LIBFT) $(PRINTF) -o $(CLIENT)
+$(NAME):$(OBJ)
+	ar rcs $(NAME) $(OBJ)
+
+%.o: %.c ft_printf.h
+	$(CC) $(CFLAGS) -c $(INCLUD) $< -o $@
 
 clean:
-	make clean -C libft
-	make clean -C ft_printf
+	rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(SERVER) $(CLIENT)
-	make fclean -C libft
-	make fclean -C ft_printf
+	rm -f $(NAME)
 
 re: fclean all
 
