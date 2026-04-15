@@ -3,6 +3,14 @@
 #include <signal.h>
 #include <unistd.h>
 
+volatile	sig_atomic_t	g_ack = 0;
+
+void	handle_ack(int sig)	
+{
+	(void)sig;
+	g_ack = 1;
+}
+
 void	safe_kill(pid_t pid, int sig)
 {
 	if (kill(pid, sig) == -1)
@@ -19,11 +27,13 @@ void	send_char(pid_t pid, unsigned char c)
 	bit = 7;
 	while (bit >= 0)
 	{
+		g_ack = 0;
 		if ((c >> bit) & 1)
 			safe_kill(pid, SIGUSR1);
 		else
 			safe_kill(pid, SIGUSR2);
-		usleep(300);
+		while(!g_ack)
+			pause();
 		bit--;
 	}
 }
@@ -38,6 +48,7 @@ int	main(int argc, char **argv)
 		ft_printf("Usage: ./client <PID> <message>\n");
 		return (1);
 	}
+	signal(SIGUSR1, handle_ack)
 	pid = ft_atoi(argv[1]);
 	if (pid <= 0)
 	{
